@@ -1,12 +1,12 @@
 {
  "date": "2026-10-27",
- "generated_at": "2026-10-27T16:24+00:00",
+ "generated_at": "2026-10-27T16:57+00:00",
  "previous_date": "2026-10-26",
  "modules": 19,
  "total_rows": 4397,
  "failed_modules": [],
  "takeaways": [
-  "WASH partner 3W rows went from 4,386 to 4,397 since 26 Oct 2026 (+11). 10 modules hold partner data; 9 still have none.",
+  "4,397 WASH partner 3W rows across 10 modules; 9 of 19 modules still have no partner data.",
   "Usage stage: Myanmar and Ethiopia are established; Afghanistan is active; 7 countries are piloting; 8 are configured with no 3W data; Ukraine has a log frame but no targets.",
   "Countries reporting at volume go below Admin 2: Myanmar (100% of rows below Admin 2); Ethiopia (100% of rows below Admin 2); South Sudan (97% of rows below Admin 2, although its models ask for Admin 2).",
   "10 of 10 reporting modules had 3W entries in the last 30 days.",
