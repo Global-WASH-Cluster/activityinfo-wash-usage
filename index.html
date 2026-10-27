@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WASH Country Module Usage</title>
+<meta name="description" content="Live read of WASH usage across the HPC Country Modules in ActivityInfo, refreshed daily.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="band">
+  <header class="wrap">
+    <div class="kicker">HPC Country Modules · ActivityInfo · WASH</div>
+    <h1>How far are countries using the WASH country modules?</h1>
+    <p class="meta" id="asof">Loading the latest ActivityInfo snapshot…</p>
+  </header>
+</div>
+
+<main class="wrap">
+  <p class="stale" id="stale" hidden></p>
+
+  <div class="panel">
+    <h2>Key takeaways</h2>
+    <ul id="takeaways"><li>Loading…</li></ul>
+  </div>
+
+  <!-- Analyst note: edit by hand; keep the date current. -->
+  <div class="panel note">
+    <h2>Analyst note · 26 October 2026</h2>
+    <ul>
+      <li>Countries that report at volume go finer than Admin 2. This is direct evidence for the cluster's position against an Admin 2 reporting cap, discussed in the 13 October menu review.</li>
+      <li>Next step: in country conversations, ask whether each country keeps a finer system and extracts to ActivityInfo, and feed the answers into the inter-cluster line.</li>
+    </ul>
+  </div>
+
+  <section>
+    <h2>Data entered</h2>
+    <p class="prose" id="bars-intro">WASH rows in partner monitoring (form 5.1A), for the modules with any partner data.</p>
+    <div class="legend" id="bars-legend"></div>
+    <div class="bars" id="bars"></div>
+  </section>
+
+  <section>
+    <h2>Usage stage by country</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Stage</th><th>Country</th><th class="num">WASH 3W rows</th><th class="num" id="chg-hd">Change</th><th>Trend</th><th class="num">Orgs</th><th class="num">Periods</th><th>Last entry</th></tr></thead>
+        <tbody id="stages"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Admin level: required versus reported</h2>
+    <p class="prose">For each country, the level its indicator models ask for, against the levels where partners actually enter 3W data.</p>
+    <div class="key">
+      <span><span class="req"></span>Required by indicator models</span>
+      <span><span class="dot rep"></span>Partners report at this level</span>
+      <span><span class="dot main"></span>Where most rows sit</span>
+    </div>
+    <div class="scroll"><div class="ladder" id="ladder"></div></div>
+  </section>
+
+  <section>
+    <h2>Indicators in use</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Country</th><th class="num">Loaded</th><th class="num">Targeted</th><th class="num">Targeted &amp; reported</th><th class="num">Age/sex on rows</th><th class="num">Disability on rows</th></tr></thead>
+        <tbody id="indicators"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Data limitations</h2>
+    <ul class="plain prose">
+      <li>The read uses a token VIEW-filtered to WASH, so nothing here covers other clusters.</li>
+      <li>Entry dates are ActivityInfo last-edit timestamps. A re-edited row moves forward in time.</li>
+      <li>Partner monitoring (form 5.1A) and cluster monitoring (form 6.1A) are separate streams and must not be added together.</li>
+      <li>Where every WASH cluster target in a module has the same value, the targets are treated as placeholders.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Method</h2>
+    <ul class="plain prose small">
+      <li>A scheduled job reads every HPC Country Module through the ActivityInfo API once a day and publishes an aggregated snapshot. The page itself never contacts ActivityInfo.</li>
+      <li>Active: 5+ reporting orgs, 2+ periods, 100+ rows and edits in the last 60 days. Established: Active plus 10+ orgs, half of targeted indicators reported, and 25%+ of target-level admin units reached where targets have geography.</li>
+      <li>Snapshots: <a href="data/latest.json">latest</a> · <a href="data/history.json">history</a>.</li>
+    </ul>
+  </section>
+</main>
+<footer class="wrap">Global WASH Cluster · Information Management</footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

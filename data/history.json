@@ -1,0 +1,305 @@
+[
+ {
+  "date": "2026-09-07",
+  "total_rows": 1489,
+  "countries": {
+   "Afghanistan": {
+    "rows": 47,
+    "orgs": 2,
+    "stage": null
+   },
+   "Burkina Faso": {
+    "rows": 36,
+    "orgs": 1,
+    "stage": null
+   },
+   "Cameroon": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "Central African Republic": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "Chad": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "Colombia": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "DRC": {
+    "rows": 1,
+    "orgs": 1,
+    "stage": null
+   },
+   "Ethiopia": {
+    "rows": 688,
+    "orgs": 25,
+    "stage": null
+   },
+   "Haiti": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "Mali": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "Mozambique": {
+    "rows": 1,
+    "orgs": 1,
+    "stage": null
+   },
+   "Myanmar": {
+    "rows": 703,
+    "orgs": 16,
+    "stage": null
+   },
+   "Niger": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "Nigeria": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "Somalia": {
+    "rows": 7,
+    "orgs": 2,
+    "stage": null
+   },
+   "South Sudan": {
+    "rows": 1,
+    "orgs": 1,
+    "stage": null
+   },
+   "Sudan": {
+    "rows": 2,
+    "orgs": 1,
+    "stage": null
+   },
+   "Ukraine": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": null
+   },
+   "Venezuela": {
+    "rows": 3,
+    "orgs": 1,
+    "stage": null
+   }
+  }
+ },
+ {
+  "date": "2026-10-26",
+  "total_rows": 4386,
+  "countries": {
+   "Myanmar": {
+    "rows": 1594,
+    "orgs": 23,
+    "stage": "Established"
+   },
+   "Ethiopia": {
+    "rows": 1251,
+    "orgs": 28,
+    "stage": "Established"
+   },
+   "Afghanistan": {
+    "rows": 924,
+    "orgs": 6,
+    "stage": "Active"
+   },
+   "South Sudan": {
+    "rows": 424,
+    "orgs": 12,
+    "stage": "Piloting"
+   },
+   "Burkina Faso": {
+    "rows": 61,
+    "orgs": 4,
+    "stage": "Piloting"
+   },
+   "Mozambique": {
+    "rows": 56,
+    "orgs": 4,
+    "stage": "Piloting"
+   },
+   "DRC": {
+    "rows": 40,
+    "orgs": 5,
+    "stage": "Piloting"
+   },
+   "Somalia": {
+    "rows": 20,
+    "orgs": 5,
+    "stage": "Piloting"
+   },
+   "Venezuela": {
+    "rows": 11,
+    "orgs": 2,
+    "stage": "Piloting"
+   },
+   "Sudan": {
+    "rows": 5,
+    "orgs": 3,
+    "stage": "Piloting"
+   },
+   "Cameroon": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Central African Republic": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Chad": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Colombia": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Haiti": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Mali": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Niger": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Nigeria": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Ukraine": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Log frame only"
+   }
+  }
+ },
+ {
+  "date": "2026-10-27",
+  "total_rows": 4397,
+  "countries": {
+   "Myanmar": {
+    "rows": 1594,
+    "orgs": 23,
+    "stage": "Established"
+   },
+   "Ethiopia": {
+    "rows": 1251,
+    "orgs": 28,
+    "stage": "Established"
+   },
+   "Afghanistan": {
+    "rows": 924,
+    "orgs": 6,
+    "stage": "Active"
+   },
+   "South Sudan": {
+    "rows": 434,
+    "orgs": 12,
+    "stage": "Piloting"
+   },
+   "Burkina Faso": {
+    "rows": 62,
+    "orgs": 5,
+    "stage": "Piloting"
+   },
+   "Mozambique": {
+    "rows": 56,
+    "orgs": 4,
+    "stage": "Piloting"
+   },
+   "DRC": {
+    "rows": 40,
+    "orgs": 5,
+    "stage": "Piloting"
+   },
+   "Somalia": {
+    "rows": 20,
+    "orgs": 5,
+    "stage": "Piloting"
+   },
+   "Venezuela": {
+    "rows": 11,
+    "orgs": 2,
+    "stage": "Piloting"
+   },
+   "Sudan": {
+    "rows": 5,
+    "orgs": 3,
+    "stage": "Piloting"
+   },
+   "Cameroon": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Central African Republic": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Chad": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Colombia": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Haiti": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Mali": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Niger": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Nigeria": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Configured"
+   },
+   "Ukraine": {
+    "rows": 0,
+    "orgs": 0,
+    "stage": "Log frame only"
+   }
+  }
+ }
+]

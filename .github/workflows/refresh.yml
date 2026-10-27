@@ -1,0 +1,55 @@
+name: Refresh ActivityInfo snapshot
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # daily 05:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --quiet requests==2.32.3
+
+      - name: Build snapshot
+        env:
+          ACTIVITYINFO_TOKEN: ${{ secrets.ACTIVITYINFO_TOKEN }}
+        run: |
+          if [ -z "$ACTIVITYINFO_TOKEN" ]; then
+            echo "::error::Repository secret ACTIVITYINFO_TOKEN is not set"; exit 1
+          fi
+          python pipeline/build_snapshot.py
+
+      - name: Check the token did not leak into published files
+        env:
+          ACTIVITYINFO_TOKEN: ${{ secrets.ACTIVITYINFO_TOKEN }}
+        run: |
+          if grep -rqF -- "$ACTIVITYINFO_TOKEN" data/ index.html assets/; then
+            echo "::error::Token string found in published files; aborting"; exit 1
+          fi
+
+      - name: Commit snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "No change in snapshot"; exit 0
+          fi
+          git commit -m "data: ActivityInfo snapshot $(date -u +%Y-%m-%d)"
+          git push
