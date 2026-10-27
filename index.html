@@ -39,7 +39,6 @@
   <section>
     <h2>Data entered</h2>
     <p class="prose" id="bars-intro">WASH rows in partner monitoring (form 5.1A), for the modules with any partner data.</p>
-    <div class="legend" id="bars-legend"></div>
     <div class="bars" id="bars"></div>
   </section>
 
@@ -47,7 +46,7 @@
     <h2>Usage stage by country</h2>
     <div class="scroll">
       <table>
-        <thead><tr><th>Stage</th><th>Country</th><th class="num">WASH 3W rows</th><th class="num" id="chg-hd">Change</th><th>Trend</th><th class="num">Orgs</th><th class="num">Periods</th><th>Last entry</th></tr></thead>
+        <thead><tr><th>Stage</th><th>Country</th><th class="num">WASH 3W rows</th><th class="num">Orgs</th><th class="num">Periods</th><th>Last entry</th></tr></thead>
         <tbody id="stages"></tbody>
       </table>
     </div>
@@ -89,7 +88,7 @@
     <ul class="plain prose small">
       <li>A scheduled job reads every HPC Country Module through the ActivityInfo API once a day and publishes an aggregated snapshot. The page itself never contacts ActivityInfo.</li>
       <li>Active: 5+ reporting orgs, 2+ periods, 100+ rows and edits in the last 60 days. Established: Active plus 10+ orgs, half of targeted indicators reported, and 25%+ of target-level admin units reached where targets have geography.</li>
-      <li>Snapshots: <a href="data/latest.json">latest</a> · <a href="data/history.json">history</a>.</li>
+      <li>Snapshot data: <a href="data/latest.json">latest.json</a>.</li>
     </ul>
   </section>
 </main>

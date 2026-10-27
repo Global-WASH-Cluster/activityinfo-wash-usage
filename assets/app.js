@@ -8,21 +8,7 @@
   const chip = (s) => `<span class="chip ${esc(s.split(" ")[0])}">${esc(s)}</span>`;
   const pct = (v) => (v == null ? "–" : `${Math.round(v)}%`);
 
-  function spark(series) {
-    const pts = series.filter((p) => p.rows != null);
-    if (pts.length < 2) return "";
-    const w = 84, h = 22, pad = 3;
-    const max = Math.max(...pts.map((p) => p.rows), 1);
-    const x = (i) => pad + (i * (w - 2 * pad)) / (pts.length - 1);
-    const y = (v) => h - pad - (v / max) * (h - 2 * pad);
-    const d = pts.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.rows).toFixed(1)}`).join("");
-    const last = pts[pts.length - 1];
-    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Rows over time: ${pts.map((p) => fmt(p.rows)).join(", ")}">` +
-      `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/>` +
-      `<circle cx="${x(pts.length - 1).toFixed(1)}" cy="${y(last.rows).toFixed(1)}" r="2.4" fill="var(--accent)"/></svg>`;
-  }
-
-  function render(snap, history) {
+  function render(snap) {
     const gen = new Date(snap.generated_at);
     $("asof").textContent = `Data as of ${day(snap.date)} · refreshed daily from ActivityInfo · ${snap.modules} country modules`;
     const ageDays = (Date.now() - gen.getTime()) / 86400000;
@@ -38,34 +24,23 @@
 
     const C = snap.countries;
     const reporting = C.filter((c) => c.rows > 0).sort((a, b) => b.rows - a.rows);
-    const prevDate = snap.previous_date;
-    const prevSnap = prevDate && history.find((h) => h.date === prevDate);
-    const prevRows = (c) => (prevSnap && prevSnap.countries[c.country] ? prevSnap.countries[c.country].rows : null);
 
-    // growth bars
-    const max = Math.max(...reporting.map((c) => Math.max(c.rows, prevRows(c) || 0)), 1);
-    $("bars-legend").innerHTML = (prevSnap ? `<span><i style="background:var(--sep)"></i>${day(prevDate)}</span>` : "") +
-      `<span><i style="background:var(--accent)"></i>${day(snap.date)}</span>`;
-    $("bars").innerHTML = reporting.map((c) => {
-      const p = prevRows(c);
-      return `<div>${esc(c.country)}</div><div class="track" role="img" aria-label="${esc(c.country)}: ${p != null ? fmt(p) + " to " : ""}${fmt(c.rows)} rows">` +
-        `<span class="now" style="width:${Math.max((c.rows / max) * 100, 0.4)}%"></span>` +
-        (p != null ? `<span class="was" style="width:${Math.max((p / max) * 100, 0.4)}%"></span>` : "") +
-        `</div><div class="val">${p != null ? fmt(p) + " → " : ""}<b>${fmt(c.rows)}</b></div>`;
-    }).join("");
+    // current rows per reporting module
+    const max = Math.max(...reporting.map((c) => c.rows), 1);
+    $("bars").innerHTML = reporting.map((c) =>
+      `<div>${esc(c.country)}</div><div class="track" role="img" aria-label="${esc(c.country)}: ${fmt(c.rows)} rows">` +
+      `<span class="now" style="width:${Math.max((c.rows / max) * 100, 0.4)}%"></span></div>` +
+      `<div class="val"><b>${fmt(c.rows)}</b></div>`).join("");
 
     // stage table: reporting countries individually, empty ones grouped by stage
-    $("chg-hd").textContent = prevDate ? `Since ${day(prevDate)}` : "Change";
-    const series = (name) => history.map((h) => ({ rows: h.countries[name] ? h.countries[name].rows : null }));
     let rows = reporting.slice().sort((a, b) => STAGE_RANK(a.stage) - STAGE_RANK(b.stage) || b.rows - a.rows).map((c) =>
       `<tr><td>${chip(c.stage)}</td><td>${esc(c.country)}${c.stale ? " *" : ""}</td><td class="num">${fmt(c.rows)}</td>` +
-      `<td class="num">${c.rows_change == null ? "–" : (c.rows_change >= 0 ? "+" : "") + fmt(c.rows_change)}</td>` +
-      `<td class="spark">${spark(series(c.country))}</td><td class="num">${fmt(c.orgs)}</td><td class="num">${fmt(c.periods)}</td><td class="nowrap">${day(c.last_entry)}</td></tr>`).join("");
+      `<td class="num">${fmt(c.orgs)}</td><td class="num">${fmt(c.periods)}</td><td class="nowrap">${day(c.last_entry)}</td></tr>`).join("");
     const empty = {};
     C.filter((c) => !c.rows).forEach((c) => (empty[c.stage] = empty[c.stage] || []).push(c));
     Object.keys(empty).sort((a, b) => STAGE_RANK(a) - STAGE_RANK(b)).forEach((s) => {
       const list = empty[s].map((c) => c.country + (s === "Log frame only" && !c.indicators_targeted ? " (no targets)" : "")).join(", ");
-      rows += `<tr><td>${chip(s)}</td><td>${esc(list)}</td><td class="num">0</td><td class="num">–</td><td></td><td class="num">–</td><td class="num">–</td><td>–</td></tr>`;
+      rows += `<tr><td>${chip(s)}</td><td>${esc(list)}</td><td class="num">0</td><td class="num">–</td><td class="num">–</td><td>–</td></tr>`;
     });
     $("stages").innerHTML = rows;
 
@@ -91,9 +66,9 @@
   const ORDER = ["Established", "Active", "Piloting", "Configured", "Log frame only", "Not set up"];
   function STAGE_RANK(s) { const i = ORDER.indexOf(s); return i < 0 ? 99 : i; }
 
-  Promise.all(["data/latest.json", "data/history.json"].map((u) =>
-    fetch(u, { cache: "no-cache" }).then((r) => { if (!r.ok) throw new Error(`${u}: HTTP ${r.status}`); return r.json(); })))
-    .then(([snap, history]) => render(snap, history))
+  fetch("data/latest.json", { cache: "no-cache" })
+    .then((r) => { if (!r.ok) throw new Error(`data/latest.json: HTTP ${r.status}`); return r.json(); })
+    .then(render)
     .catch((e) => {
       $("asof").textContent = "The snapshot could not be loaded.";
       $("takeaways").innerHTML = `<li class="error">Could not load the data files (${esc(e.message)}). Reload the page; if it persists, the refresh job may have failed.</li>`;

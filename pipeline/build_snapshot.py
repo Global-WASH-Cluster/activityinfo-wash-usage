@@ -96,15 +96,8 @@ def takeaways(countries: list[dict], prev: dict | None) -> list[str]:
     total = sum(c["rows"] for c in countries)
     with_data = [c for c in countries if c["rows"]]
     without = len(countries) - len(with_data)
-    if prev:
-        p_total = prev["total_rows"]
-        out.append(
-            f"WASH partner 3W rows went from {fmt(p_total)} to {fmt(total)} since "
-            f"{day(prev['date'])} ({'+' if total >= p_total else ''}{fmt(total - p_total)}). "
-            f"{len(with_data)} modules hold partner data; {without} still have none.")
-    else:
-        out.append(f"{fmt(total)} WASH partner 3W rows across {len(with_data)} modules; "
-                   f"{without} modules still have none.")
+    out.append(f"{fmt(total)} WASH partner 3W rows across {len(with_data)} modules; "
+               f"{without} of {len(countries)} modules still have no partner data.")
 
     by = {s: [c["country"] for c in countries if c["stage"] == s] for s in STAGE_ORDER}
     parts = []
