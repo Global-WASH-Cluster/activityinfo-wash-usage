@@ -97,3 +97,16 @@ code { font-size: 0.88em; background: var(--accent-soft); color: var(--ink); pad
 @media (max-width: 520px) { .bars { grid-template-columns: 88px 1fr; } .bars .val { grid-column: 2; text-align: left; margin-top: -6px; } }
 @media (prefers-reduced-motion: no-preference) { .track span { transition: width 0.4s ease; } }
 .nowrap { white-space: nowrap; }
+
+/* password gate */
+.report { display: grid; gap: 44px; }
+.gate { background: var(--surface); border-left: 6px solid var(--gwc-teal); border-radius: 4px; padding: 24px; display: grid; gap: 12px; max-width: 560px; }
+.gate h2 { color: var(--heading); font-size: 1.15rem; }
+.gate-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.gate input { flex: 1 1 220px; font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--ground); color: var(--ink); }
+.gate input:focus-visible, .gate button:focus-visible { outline: 3px solid var(--gwc-yellow); outline-offset: 2px; }
+.gate button { font: inherit; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 9px 18px; border: 0; border-radius: 4px; background: var(--gwc-teal); color: #fff; cursor: pointer; }
+.gate button:disabled { opacity: 0.6; cursor: progress; }
+.gate-msg { min-height: 1.4em; font-size: 0.95rem; color: var(--muted); }
+.gate-msg.error { color: #b3261e; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

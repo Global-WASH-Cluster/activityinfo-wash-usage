@@ -24,23 +24,31 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install --quiet requests==2.32.3
+        run: pip install --quiet requests==2.32.3 cryptography==43.0.3
 
       - name: Build snapshot
         env:
           ACTIVITYINFO_TOKEN: ${{ secrets.ACTIVITYINFO_TOKEN }}
+          SNAPSHOT_PASSWORD: ${{ secrets.SNAPSHOT_PASSWORD }}
         run: |
-          if [ -z "$ACTIVITYINFO_TOKEN" ]; then
-            echo "::error::Repository secret ACTIVITYINFO_TOKEN is not set"; exit 1
+          if [ -z "$ACTIVITYINFO_TOKEN" ] || [ -z "$SNAPSHOT_PASSWORD" ]; then
+            echo "::error::Repository secrets ACTIVITYINFO_TOKEN and SNAPSHOT_PASSWORD must both be set"; exit 1
           fi
           python pipeline/build_snapshot.py
 
-      - name: Check the token did not leak into published files
+      - name: Check no secret or plaintext data is published
         env:
           ACTIVITYINFO_TOKEN: ${{ secrets.ACTIVITYINFO_TOKEN }}
+          SNAPSHOT_PASSWORD: ${{ secrets.SNAPSHOT_PASSWORD }}
         run: |
-          if grep -rqF -- "$ACTIVITYINFO_TOKEN" data/ index.html assets/; then
-            echo "::error::Token string found in published files; aborting"; exit 1
+          for s in "$ACTIVITYINFO_TOKEN" "$SNAPSHOT_PASSWORD"; do
+            if grep -rqF -- "$s" data/ index.html assets/; then
+              echo "::error::A secret string was found in published files; aborting"; exit 1
+            fi
+          done
+          plain=$(find data -name '*.json' ! -name '*.enc.json')
+          if [ -n "$plain" ]; then
+            echo "::error::Unencrypted data files present: $plain"; exit 1
           fi
 
       - name: Commit snapshot

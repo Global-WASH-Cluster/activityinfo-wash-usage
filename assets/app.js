@@ -66,11 +66,44 @@
   const ORDER = ["Established", "Active", "Piloting", "Configured", "Log frame only", "Not set up"];
   function STAGE_RANK(s) { const i = ORDER.indexOf(s); return i < 0 ? 99 : i; }
 
-  fetch("data/latest.json", { cache: "no-cache" })
-    .then((r) => { if (!r.ok) throw new Error(`data/latest.json: HTTP ${r.status}`); return r.json(); })
-    .then(render)
-    .catch((e) => {
-      $("asof").textContent = "The snapshot could not be loaded.";
-      $("takeaways").innerHTML = `<li class="error">Could not load the data files (${esc(e.message)}). Reload the page; if it persists, the refresh job may have failed.</li>`;
-    });
+  // --- password gate: data files are AES-256-GCM encrypted (see pipeline/vault.py)
+  const b64 = (t) => Uint8Array.from(atob(t), (c) => c.charCodeAt(0));
+  async function decrypt(env, password) {
+    const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey(
+      { name: "PBKDF2", hash: "SHA-256", salt: b64(env.salt), iterations: env.iter },
+      base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(env.iv) }, key, b64(env.ct));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  let envelope = null;
+  async function unlock(password, remember) {
+    if (!envelope) {
+      const r = await fetch("data/latest.enc.json", { cache: "no-cache" });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      envelope = await r.json();
+    }
+    let snap;
+    try { snap = await decrypt(envelope, password); }
+    catch (e) { const err = new Error("wrong"); err.wrong = true; throw err; }
+    if (remember) { try { sessionStorage.setItem("aiw-pw", password); } catch (e) { /* storage blocked */ } }
+    $("gate").hidden = true;
+    $("report").hidden = false;
+    render(snap);
+  }
+  const msg = $("gate-msg");
+  $("gate").addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    const btn = $("unlock");
+    btn.disabled = true; msg.className = "gate-msg"; msg.textContent = "Checking…";
+    unlock($("pw").value, true).catch((e) => {
+      msg.className = "gate-msg error";
+      msg.textContent = e.wrong ? "That password is not correct. Check it and try again." :
+        `The report data could not be loaded (${e.message}). Reload the page and try again.`;
+      $("pw").select();
+    }).finally(() => { btn.disabled = false; });
+  });
+  let saved = null;
+  try { saved = sessionStorage.getItem("aiw-pw"); } catch (e) { /* storage blocked */ }
+  if (saved) unlock(saved, false).catch(() => { try { sessionStorage.removeItem("aiw-pw"); } catch (e) { /* */ } });
 })();

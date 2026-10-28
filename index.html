@@ -15,11 +15,23 @@
   <header class="wrap">
     <div class="kicker">HPC Country Modules · ActivityInfo · WASH</div>
     <h1>How far are countries using the WASH country modules?</h1>
-    <p class="meta" id="asof">Loading the latest ActivityInfo snapshot…</p>
+    <p class="meta" id="asof">Refreshed daily from ActivityInfo</p>
   </header>
 </div>
 
 <main class="wrap">
+  <form class="gate" id="gate" autocomplete="off">
+    <h2>Restricted report</h2>
+    <p>Enter the password shared by the Global WASH Cluster IM team to view the report.</p>
+    <div class="gate-row">
+      <label for="pw" class="sr">Password</label>
+      <input type="password" id="pw" name="pw" placeholder="Password" required autofocus>
+      <button type="submit" id="unlock">View report</button>
+    </div>
+    <p class="gate-msg" id="gate-msg" role="status"></p>
+  </form>
+
+  <div id="report" class="report" hidden>
   <p class="stale" id="stale" hidden></p>
 
   <div class="panel">
@@ -79,9 +91,10 @@
     <ul class="plain prose small">
       <li>A scheduled job reads every HPC Country Module through the ActivityInfo API once a day and publishes an aggregated snapshot. The page itself never contacts ActivityInfo.</li>
       <li>Active: 5+ reporting orgs, 2+ periods, 100+ rows and edits in the last 60 days. Established: Active plus 10+ orgs, half of targeted indicators reported, and 25%+ of target-level admin units reached where targets have geography.</li>
-      <li>Snapshot data: <a href="data/latest.json">latest.json</a>.</li>
+      <li>The published data files are encrypted; this page decrypts them in your browser once the password is entered.</li>
     </ul>
   </section>
+  </div>
 </main>
 <footer class="wrap">Global WASH Cluster · Information Management</footer>
 <script src="assets/app.js"></script>

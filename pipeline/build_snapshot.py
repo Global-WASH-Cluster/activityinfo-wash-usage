@@ -3,9 +3,11 @@
 Runs ai_analyze over every HPC Country Module, reduces each result to a
 whitelisted public record (no database ids, grants or per-indicator detail),
 and writes:
-  data/latest.json               current snapshot + generated takeaways
-  data/snapshots/YYYY-MM-DD.json  dated copy
-  data/history.json               per-date, per-country rows / orgs / stage
+  data/latest.enc.json               current snapshot + generated takeaways
+  data/snapshots/YYYY-MM-DD.enc.json  dated copy
+  data/history.enc.json               per-date, per-country rows / orgs / stage
+All three are encrypted with SNAPSHOT_PASSWORD (see vault.py): the repo and
+Pages site are public, so nothing is written in clear.
 
 Token: ACTIVITYINFO_TOKEN env var (repo secret in CI). Never written anywhere.
 
@@ -23,6 +25,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
+import vault
 from rules import STAGE_ORDER, placeholder_targets, stage, target_unit_coverage
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -130,14 +133,14 @@ def takeaways(countries: list[dict], prev: dict | None) -> list[str]:
     return out
 
 
-def load_json(p: Path, default):
-    return json.loads(p.read_text()) if p.exists() else default
+LATEST = DATA / "latest.enc.json"
+HISTORY = DATA / "history.enc.json"
 
 
 def write_snapshot(countries: list[dict], date: str, generated_at: str,
                    failures: list[str]) -> None:
     countries.sort(key=lambda c: (STAGE_ORDER.index(c["stage"]), -c["rows"], c["country"]))
-    history = load_json(DATA / "history.json", [])
+    history = vault.read(HISTORY, [])
     history = [h for h in history if h["date"] != date]
     prev = max((h for h in history if h["date"] < date), key=lambda h: h["date"],
                default=None)
@@ -164,11 +167,9 @@ def write_snapshot(countries: list[dict], date: str, generated_at: str,
     })
     history.sort(key=lambda h: h["date"])
 
-    (DATA / "snapshots").mkdir(parents=True, exist_ok=True)
-    body = json.dumps(snap, indent=1, ensure_ascii=False)
-    (DATA / "latest.json").write_text(body)
-    (DATA / "snapshots" / f"{date}.json").write_text(body)
-    (DATA / "history.json").write_text(json.dumps(history, indent=1, ensure_ascii=False))
+    vault.write(LATEST, snap)
+    vault.write(DATA / "snapshots" / f"{date}.enc.json", snap)
+    vault.write(HISTORY, history)
     print(f"wrote {date}: {len(countries)} modules, {snap['total_rows']} WASH rows, "
           f"prev={snap['previous_date']}, failed={failures}")
 
@@ -182,7 +183,7 @@ def live() -> None:
     items = dbs if isinstance(dbs, list) else dbs.get("databases", dbs)
     modules = sorted((d["label"], d["databaseId"]) for d in items
                      if d["label"].startswith(PREFIX))
-    prev = {x["country"]: x for x in load_json(DATA / "latest.json", {}).get("countries", [])}
+    prev = {x["country"]: x for x in vault.read(LATEST, {}).get("countries", [])}
     countries, failures = [], []
     for label, db_id in modules:
         try:
@@ -212,7 +213,7 @@ def seed(metrics_dir: Path, date: str) -> None:
     if all("entry" in m["partner_monitoring"] for m in ms):
         write_snapshot([public_record(m) for m in ms], date, f"{date}T00:00+00:00", [])
         return
-    history = [h for h in load_json(DATA / "history.json", []) if h["date"] != date]
+    history = [h for h in vault.read(HISTORY, []) if h["date"] != date]
     history.append({
         "date": date,
         "total_rows": sum(m["partner_monitoring"]["disagg_rows_wash"] for m in ms),
@@ -221,8 +222,7 @@ def seed(metrics_dir: Path, date: str) -> None:
                                      "stage": None} for m in ms},
     })
     history.sort(key=lambda h: h["date"])
-    DATA.mkdir(exist_ok=True)
-    (DATA / "history.json").write_text(json.dumps(history, indent=1, ensure_ascii=False))
+    vault.write(HISTORY, history)
     print(f"seeded history only for {date} ({len(ms)} modules)")
 
 
